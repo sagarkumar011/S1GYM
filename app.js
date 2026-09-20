@@ -8,16 +8,28 @@ let currentPage = 'dashboard';
 let qrScanner = null;
 
 // ── Initialization ───────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    DB.seed();
-    const session = DB.getSession();
-    if (session) {
-        renderApp();
-    } else {
-        renderLogin();
-    }
-    window.addEventListener('hashchange', handleRoute);
-});
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof DB !== 'undefined' && DB.seed) {
+            DB.seed();
+        }
+        const session = (typeof DB !== 'undefined' && DB.getSession) ? DB.getSession() : null;
+        if (session) {
+            renderApp();
+        } else {
+            renderLogin();
+        }
+        window.addEventListener('hashchange', handleRoute);
+
+        const overlay = document.getElementById('modalOverlay');
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+        }
+    });
+}
+
 
 // ── Router ───────────────────────────────────────────────────
 function navigate(page, params = {}) {
@@ -70,9 +82,6 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeModal();
-});
 
 // ── Sidebar Toggle ───────────────────────────────────────────
 function toggleSidebar() {
@@ -2860,3 +2869,8 @@ function renderMore(container) {
         </div>
     `;
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {};
+}
+

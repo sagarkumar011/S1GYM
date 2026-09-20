@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 const MIME_TYPES = {
@@ -16,8 +17,55 @@ const MIME_TYPES = {
     '.woff2': 'font/woff2'
 };
 
-const server = http.createServer((req, res) => {
-    let reqPath = decodeURIComponent(req.url.split('?')[0]);
+const server = http.createServer(async (req, res) => {
+    const parsedUrl = url.parse(req.url, true);
+    const pathname = parsedUrl.pathname;
+
+    // Handle /api/... routes
+    if (pathname.startsWith('/api/')) {
+        const routeName = pathname.replace('/api/', '').split('/')[0];
+        const routeFile = path.join(__dirname, 'api', `${routeName}.js`);
+
+        if (fs.existsSync(routeFile)) {
+            try {
+                // Collect body for POST/PUT
+                let body = '';
+                for await (const chunk of req) {
+                    body += chunk;
+                }
+                if (body) {
+                    try { req.body = JSON.parse(body); } catch(e) { req.body = body; }
+                } else {
+                    req.body = {};
+                }
+                req.query = parsedUrl.query || {};
+
+                // Vercel-compatible response helper
+                res.status = function(code) {
+                    this.statusCode = code;
+                    return this;
+                };
+                res.json = function(data) {
+                    this.setHeader('Content-Type', 'application/json');
+                    this.end(JSON.stringify(data));
+                    return this;
+                };
+
+                const handler = require(routeFile);
+                return await handler(req, res);
+            } catch (err) {
+                console.error('API Error:', err);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ error: err.message }));
+            }
+        } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: 'API route not found' }));
+        }
+    }
+
+    // Static file serving
+    let reqPath = decodeURIComponent(pathname);
     if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
 
     const filePath = path.join(__dirname, reqPath);

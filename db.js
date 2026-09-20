@@ -5,15 +5,24 @@
 // ============================================================
 
 const DB = {
+    _memoryStore: {},
     // ── Helpers ──────────────────────────────────────────────
     _get(key) {
         try {
-            const d = localStorage.getItem('s1gyma_' + key);
-            return d ? JSON.parse(d) : null;
-        } catch { return null; }
+            if (typeof localStorage !== 'undefined') {
+                const d = localStorage.getItem('s1gyma_' + key);
+                if (d) return JSON.parse(d);
+            }
+            return this._memoryStore[key] || null;
+        } catch { return this._memoryStore[key] || null; }
     },
     _set(key, val) {
-        localStorage.setItem('s1gyma_' + key, JSON.stringify(val));
+        this._memoryStore[key] = val;
+        try {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem('s1gyma_' + key, JSON.stringify(val));
+            }
+        } catch(e) {}
     },
     _genId() {
         return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -78,7 +87,12 @@ const DB = {
         return this._get('session');
     },
     logout() {
-        localStorage.removeItem('s1gyma_session');
+        try {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem('s1gyma_session');
+            }
+        } catch(e) {}
+        delete this._memoryStore['session'];
     },
 
     // ── Settings ─────────────────────────────────────────────
@@ -485,7 +499,17 @@ const DB = {
 
     // ── Reset ────────────────────────────────────────────────
     resetAll() {
-        const keys = Object.keys(localStorage).filter(k => k.startsWith('s1gyma_'));
-        keys.forEach(k => localStorage.removeItem(k));
+        try {
+            if (typeof localStorage !== 'undefined') {
+                const keys = Object.keys(localStorage).filter(k => k.startsWith('s1gyma_'));
+                keys.forEach(k => localStorage.removeItem(k));
+            }
+        } catch(e) {}
+        this._memoryStore = {};
     }
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DB;
+}
+

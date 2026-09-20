@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": false
+  },
+  "include": [
+    "api/**/*.js",
+    "server.js",
+    "db.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
