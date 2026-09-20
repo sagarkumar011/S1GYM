@@ -1,4 +1,4 @@
-const DB = require('../db');
+const DB = require('../lib/db');
 if (!DB._get('seeded')) DB.seed();
 
 module.exports = async function handler(req, res) {

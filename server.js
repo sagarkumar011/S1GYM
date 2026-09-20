@@ -1,9 +1,10 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
 
 const PORT = process.env.PORT || 3000;
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
@@ -18,7 +19,7 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer(async (req, res) => {
-    const parsedUrl = url.parse(req.url, true);
+    const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
 
     // Handle /api/... routes
@@ -28,7 +29,6 @@ const server = http.createServer(async (req, res) => {
 
         if (fs.existsSync(routeFile)) {
             try {
-                // Collect body for POST/PUT
                 let body = '';
                 for await (const chunk of req) {
                     body += chunk;
@@ -38,9 +38,8 @@ const server = http.createServer(async (req, res) => {
                 } else {
                     req.body = {};
                 }
-                req.query = parsedUrl.query || {};
+                req.query = Object.fromEntries(parsedUrl.searchParams);
 
-                // Vercel-compatible response helper
                 res.status = function(code) {
                     this.statusCode = code;
                     return this;
@@ -64,13 +63,13 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    // Static file serving
+    // Static file serving from public/
     let reqPath = decodeURIComponent(pathname);
     if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
 
-    const filePath = path.join(__dirname, reqPath);
+    const filePath = path.join(PUBLIC_DIR, reqPath);
 
-    if (!filePath.startsWith(__dirname)) {
+    if (!filePath.startsWith(PUBLIC_DIR)) {
         res.writeHead(403);
         return res.end('Forbidden');
     }

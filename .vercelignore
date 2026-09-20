@@ -1,0 +1,5 @@
+# Development and test files
+server.js
+test-api.js
+.git/
+node_modules/

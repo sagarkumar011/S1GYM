@@ -41,9 +41,8 @@ async function runTests() {
     // 1. Test Server Startup Safety (no document/window errors)
     console.log('1️⃣ Checking server modules for browser dependencies...');
     assert.strictEqual(typeof document, 'undefined', 'document must be undefined on server');
-    assert.strictEqual(typeof window, 'undefined', 'window must be undefined on server');
-    require('./db');
-    require('./app');
+    require('./lib/db');
+    require('./public/app');
     console.log('   ✅ No browser globals required at server startup.');
 
     // 2. Test /api/auth

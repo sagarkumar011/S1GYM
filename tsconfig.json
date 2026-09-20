@@ -10,10 +10,12 @@
   },
   "include": [
     "api/**/*.js",
+    "lib/**/*.js",
     "server.js",
-    "db.js"
+    "test-api.js"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "public"
   ]
 }

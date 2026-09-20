@@ -2,12 +2,11 @@
   "name": "s1-gym",
   "version": "1.0.0",
   "description": "S1 GYMA — Premium Gym Management & Attendance System",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "build": "node -e \"console.log('Build successful: S1 GYMA ready for deployment')\"",
-    "lint": "node --check app.js db.js server.js api/auth.js api/dashboard.js api/members.js api/attendance.js api/payments.js",
-    "typecheck": "tsc --noEmit --allowJs --checkJs false app.js db.js server.js api/*.js || echo 'Typecheck completed'",
+    "lint": "node --check public/app.js public/db.js lib/db.js server.js api/auth.js api/dashboard.js api/members.js api/attendance.js api/payments.js",
+    "typecheck": "tsc --noEmit",
     "test:api": "node test-api.js"
   },
   "keywords": [
