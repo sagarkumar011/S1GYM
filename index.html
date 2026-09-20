@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="description" content="S1 GYMA — Premium Gym Management & Attendance System. Strength • Discipline • Results">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>S1 GYMA — Gym Management</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- QR Code Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- jsPDF for receipt generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ═══════ App Root ═══════ -->
+    <div id="app"></div>
+
+    <!-- ═══════ Toast Container ═══════ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ═══════ Modal Overlay ═══════ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <!-- ═══════ Notification Panel ═══════ -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h3>🔔 Notifications</h3>
+            <button class="modal-close" onclick="toggleNotifPanel()">✕</button>
+        </div>
+        <div class="notif-panel-body" id="notifPanelBody"></div>
+    </div>
+
+    <!-- ═══════ Sidebar Overlay (mobile) ═══════ -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- ═══════ Scripts ═══════ -->
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
